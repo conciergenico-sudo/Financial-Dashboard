@@ -240,7 +240,7 @@ export function buildDashboardData(
   }
 
   return {
-    companyName: companyInfoRaw.CompanyInfo.CompanyName,
+    companyName: companyInfoRaw?.CompanyInfo?.CompanyName ?? 'My Company',
     lastUpdated: new Date().toISOString(),
     weekRange, kpi, weeklyRevenue,
     expensesByCategory: extractExpensesByCategory(plRaw),

@@ -30,7 +30,7 @@ async function getValidAccessToken(): Promise<{ accessToken: string; realmId: st
       access_token: refreshed.access_token,
       refresh_token: refreshed.refresh_token,
       realm_id: tokens.realm_id,
-      expires_at: nowMs + refreshed.expires_in * 1000,
+      expires_at: nowMs + (typeof refreshed.expires_in === 'number' ? refreshed.expires_in : 3600) * 1000,
     }
     await saveTokens(updated)
     return { accessToken: updated.access_token, realmId: updated.realm_id }
