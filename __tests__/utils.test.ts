@@ -5,6 +5,7 @@ import {
   formatChangePercent,
   getWeekRange,
   getDateNWeeksAgo,
+  shortWeekLabel,
   classifyInvoiceStatus,
 } from '@/lib/utils'
 
@@ -62,5 +63,27 @@ describe('getWeekRange', () => {
     const range = getWeekRange(new Date('2026-04-27'))
     expect(range.start).toBe('2026-04-27')
     expect(range.end).toBe('2026-05-03')
+  })
+})
+
+describe('getDateNWeeksAgo', () => {
+  it('returns a date 8 weeks before the given date', () => {
+    const from = new Date('2026-04-27T00:00:00Z')
+    const result = getDateNWeeksAgo(8, from)
+    expect(result.toISOString().slice(0, 10)).toBe('2026-03-02')
+  })
+  it('returns a date 1 week before the given date', () => {
+    const from = new Date('2026-04-27T00:00:00Z')
+    const result = getDateNWeeksAgo(1, from)
+    expect(result.toISOString().slice(0, 10)).toBe('2026-04-20')
+  })
+})
+
+describe('shortWeekLabel', () => {
+  it('formats ISO date to short month + day', () => {
+    expect(shortWeekLabel('2026-04-21')).toBe('Apr 21')
+  })
+  it('formats another date correctly', () => {
+    expect(shortWeekLabel('2026-01-05')).toBe('Jan 5')
   })
 })

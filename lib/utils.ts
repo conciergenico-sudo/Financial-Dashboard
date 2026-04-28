@@ -62,12 +62,12 @@ export function getWeekRange(date: Date): { start: string; end: string; label: s
 
 export function getDateNWeeksAgo(n: number, from: Date = new Date()): Date {
   const d = new Date(from)
-  d.setDate(d.getDate() - n * 7)
+  d.setUTCDate(d.getUTCDate() - n * 7)
   return d
 }
 
 // Returns short label like "Apr 21" from ISO date string
 export function shortWeekLabel(isoDate: string): string {
-  const d = new Date(isoDate + 'T00:00:00')
-  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(d)
+  const d = new Date(isoDate + 'T00:00:00Z')
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(d)
 }
