@@ -9,18 +9,35 @@ import { ProfitMarginChart } from '@/components/dashboard/ProfitMarginChart'
 import { SalesByServiceChart } from '@/components/dashboard/SalesByServiceChart'
 import { NewVsRecurringSection } from '@/components/dashboard/NewVsRecurringSection'
 import { InvoicesTable } from '@/components/dashboard/InvoicesTable'
+import { getTokens } from '@/lib/qb/client'
 import type { DashboardData } from '@/types/dashboard'
 
 async function getDashboardData(): Promise<{ connected: boolean; data?: DashboardData; error?: string }> {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000'
+  try {
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000'
 
-  const res = await fetch(`${baseUrl}/api/dashboard`, { cache: 'no-store' })
-  return res.json()
+    const res = await fetch(`${baseUrl}/api/dashboard`, { cache: 'no-store' })
+
+    if (!res.ok) return { connected: false }
+
+    const contentType = res.headers.get('content-type') ?? ''
+    if (!contentType.includes('application/json')) return { connected: false }
+
+    return res.json()
+  } catch {
+    return { connected: false }
+  }
 }
 
 export default async function DashboardPage() {
+  // Check Redis directly — no HTTP call — so a missing/broken token never crashes the page
+  const tokens = await getTokens()
+  if (!tokens) {
+    return <ConnectPrompt />
+  }
+
   const result = await getDashboardData()
 
   if (!result.connected) {
