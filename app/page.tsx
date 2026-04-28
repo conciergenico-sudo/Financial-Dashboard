@@ -31,17 +31,21 @@ async function getDashboardData(): Promise<{ connected: boolean; data?: Dashboar
   }
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { error?: string }
+}) {
   // Check Redis directly — no HTTP call — so a missing/broken token never crashes the page
   const tokens = await getTokens()
   if (!tokens) {
-    return <ConnectPrompt />
+    return <ConnectPrompt error={searchParams.error} />
   }
 
   const result = await getDashboardData()
 
   if (!result.connected) {
-    return <ConnectPrompt />
+    return <ConnectPrompt error={searchParams.error} />
   }
 
   if (result.error || !result.data) {

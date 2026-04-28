@@ -1,6 +1,10 @@
 // components/dashboard/ConnectPrompt.tsx
 
-export function ConnectPrompt() {
+interface Props {
+  error?: string
+}
+
+export function ConnectPrompt({ error }: Props) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 max-w-md w-full text-center">
@@ -15,11 +19,19 @@ export function ConnectPrompt() {
         <p className="text-gray-500 text-sm mb-6">
           Connect your QuickBooks account to start viewing your weekly financial data.
         </p>
+
+        {error && (
+          <div className="mb-5 p-3 bg-red-50 border border-red-100 rounded-lg text-left">
+            <p className="text-xs font-semibold text-red-600 mb-1">Connection failed</p>
+            <p className="text-xs text-red-500 font-mono break-all">{decodeURIComponent(error)}</p>
+          </div>
+        )}
+
         <a
           href="/api/connect"
           className="inline-flex items-center justify-center w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
         >
-          Connect QuickBooks
+          {error ? 'Try Again' : 'Connect QuickBooks'}
         </a>
       </div>
     </div>
