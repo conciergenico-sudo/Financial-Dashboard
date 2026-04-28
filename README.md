@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pawsome Financial Dashboard
 
-## Getting Started
+Weekly financial dashboard connected to QuickBooks. Deploy once to Vercel — everyone with the URL sees live data.
 
-First, run the development server:
+## Setup
+
+### 1. Get QuickBooks API credentials
+
+1. Go to [developer.intuit.com](https://developer.intuit.com) and sign in
+2. Click **Create an App** → choose **QuickBooks Online and Payments**
+3. Name it "Pawsome Dashboard"
+4. Go to **Keys & credentials** → copy **Client ID** and **Client Secret**
+5. Under **Redirect URIs**, add: `https://YOUR_APP.vercel.app/api/auth/quickbooks`
+   (also add `http://localhost:3000/api/auth/quickbooks` for local dev)
+6. Set the app to **Production** mode when ready
+
+### 2. Set up Upstash Redis
+
+1. Go to [upstash.com](https://upstash.com) and create a free account
+2. Create a new Redis database (free tier is sufficient)
+3. Copy the **REST URL** and **REST Token** from the database details page
+
+### 3. Set environment variables in Vercel
+
+In your Vercel project → **Settings** → **Environment Variables**, add:
+
+| Variable | Value |
+|---|---|
+| `QUICKBOOKS_CLIENT_ID` | From developer.intuit.com |
+| `QUICKBOOKS_CLIENT_SECRET` | From developer.intuit.com |
+| `QUICKBOOKS_REDIRECT_URI` | `https://YOUR_APP.vercel.app/api/auth/quickbooks` |
+| `NEXTAUTH_SECRET` | Run `openssl rand -base64 32` and paste result |
+| `UPSTASH_REDIS_REST_URL` | From upstash.com dashboard |
+| `UPSTASH_REDIS_REST_TOKEN` | From upstash.com dashboard |
+
+### 4. Deploy
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm i -g vercel
+vercel --prod
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or connect your GitHub repo in the Vercel dashboard for automatic deploys.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Connect QuickBooks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Open your deployed URL
+2. Click **Connect QuickBooks**
+3. Sign in to QuickBooks and authorize the app
+4. You'll be redirected back to the dashboard — done!
 
-## Learn More
+The connection persists in Upstash Redis. Both users just open the URL.
 
-To learn more about Next.js, take a look at the following resources:
+## Local Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cp .env.example .env.local
+# Fill in your credentials
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 14 (App Router)
+- Tailwind CSS
+- Recharts
+- QuickBooks OAuth 2.0
+- Upstash Redis (token storage)

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const tokens = await exchangeCodeForTokens(code, realmId)
+    const tokens = await exchangeCodeForTokens(code)
     const qbTokens: QBTokens = {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,

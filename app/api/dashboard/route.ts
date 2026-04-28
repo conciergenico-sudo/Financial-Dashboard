@@ -59,6 +59,7 @@ export async function GET() {
         ),
       ])
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const dashboardData = buildDashboardData(
       companyInfoRaw as any,
       plRaw as any,
@@ -68,6 +69,7 @@ export async function GET() {
       accountsRaw as any,
       weekRange
     )
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     return NextResponse.json({ connected: true, data: dashboardData })
   } catch (err) {

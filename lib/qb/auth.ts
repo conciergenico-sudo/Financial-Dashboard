@@ -16,8 +16,7 @@ export function buildAuthUrl(): string {
 }
 
 export async function exchangeCodeForTokens(
-  code: string,
-  realmId: string
+  code: string
 ): Promise<{ access_token: string; refresh_token: string; expires_in: number }> {
   const credentials = Buffer.from(
     `${process.env.QUICKBOOKS_CLIENT_ID}:${process.env.QUICKBOOKS_CLIENT_SECRET}`
