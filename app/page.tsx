@@ -1,4 +1,6 @@
 // app/page.tsx
+export const dynamic = 'force-dynamic'
+
 import { ConnectPrompt } from '@/components/dashboard/ConnectPrompt'
 import { Header } from '@/components/dashboard/Header'
 import { KpiRow } from '@/components/dashboard/KpiRow'
