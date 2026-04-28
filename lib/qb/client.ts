@@ -8,9 +8,13 @@ const QB_BASE = 'https://quickbooks.api.intuit.com'
 
 export async function getTokens(): Promise<QBTokens | null> {
   try {
-    const tokens = await redis.get<QBTokens>(KV_KEY)
-    return tokens
-  } catch {
+    const raw = await redis.get('qb_tokens')
+    if (raw === null || raw === undefined) return null
+    // Upstash may return the stored value as a raw JSON string instead of a parsed object
+    if (typeof raw === 'string') return JSON.parse(raw) as QBTokens
+    return raw as QBTokens
+  } catch (err) {
+    console.error('getTokens error:', err)
     return null
   }
 }
