@@ -4,7 +4,11 @@ import { refreshAccessToken } from './auth'
 import type { QBTokens } from '@/types/dashboard'
 
 const KV_KEY = 'qb_tokens'
-const QB_BASE = 'https://quickbooks.api.intuit.com'
+
+// Sandbox apps (QB Developer mode) use a different base URL
+const QB_BASE = process.env.QUICKBOOKS_ENVIRONMENT === 'sandbox'
+  ? 'https://sandbox-quickbooks.api.intuit.com'
+  : 'https://quickbooks.api.intuit.com'
 
 export async function getTokens(): Promise<QBTokens | null> {
   try {
@@ -48,6 +52,7 @@ export async function qbFetch(path: string): Promise<unknown> {
   if (!auth) throw new Error('NOT_CONNECTED')
 
   const url = `${QB_BASE}/v3/company/${auth.realmId}${path}`
+  console.log('qbFetch:', url)
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${auth.accessToken}`,

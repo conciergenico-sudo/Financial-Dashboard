@@ -22,14 +22,20 @@ async function getDashboardData(): Promise<{ connected: boolean; data?: Dashboar
 
     const res = await fetch(`${baseUrl}/api/dashboard`, { cache: 'no-store' })
 
-    if (!res.ok) return { connected: false }
-
     const contentType = res.headers.get('content-type') ?? ''
-    if (!contentType.includes('application/json')) return { connected: false }
+    if (!contentType.includes('application/json')) {
+      // Got an HTML page — likely a crash in the API route
+      return { connected: true, error: `API returned non-JSON (status ${res.status})` }
+    }
 
-    return res.json()
-  } catch {
-    return { connected: false }
+    const json = await res.json()
+    // The API route returns { connected: true, error: '...' } with status 500 on QB errors —
+    // preserve that so we show an error banner rather than the Connect screen
+    return json
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('getDashboardData fetch error:', message)
+    return { connected: true, error: message }
   }
 }
 
@@ -40,11 +46,13 @@ export default async function DashboardPage({
 }) {
   // Check Redis directly — no HTTP call — so a missing/broken token never crashes the page
   const tokens = await getTokens()
+  console.log('DashboardPage: getTokens result =', tokens ? 'found (realmId: ' + tokens.realm_id + ')' : 'null')
   if (!tokens) {
     return <ConnectPrompt error={searchParams.error} />
   }
 
   const result = await getDashboardData()
+  console.log('DashboardPage: getDashboardData result =', { connected: result.connected, hasData: !!result.data, error: result.error })
 
   if (!result.connected) {
     return <ConnectPrompt error={searchParams.error} />
