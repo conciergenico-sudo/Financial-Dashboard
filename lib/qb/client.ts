@@ -4,11 +4,7 @@ import { refreshAccessToken } from './auth'
 import type { QBTokens } from '@/types/dashboard'
 
 const KV_KEY = 'qb_tokens'
-
-// Sandbox apps (QB Developer mode) use a different base URL
-const QB_BASE = process.env.QUICKBOOKS_ENVIRONMENT === 'sandbox'
-  ? 'https://sandbox-quickbooks.api.intuit.com'
-  : 'https://quickbooks.api.intuit.com'
+const QB_BASE = 'https://quickbooks.api.intuit.com'
 
 export async function getTokens(): Promise<QBTokens | null> {
   try {
